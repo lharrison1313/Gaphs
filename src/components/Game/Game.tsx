@@ -1,14 +1,19 @@
 import React, { ReactNode, useEffect, useState } from 'react'
-import './App.css'
+import './Game.css'
 import * as d3_force from 'd3-force'
-import { SimulationGaphNode, SimulationGaphLink } from './types/d3-force'
-import GaphNode from './components/GaphNode/GaphNode'
-import GaphLink from './components/GaphLink/GaphLink'
+import { SimulationGaphNode, SimulationGaphLink } from '../../types/d3-force'
+import GaphNode from '../GaphNode/GaphNode'
+import GaphLink from '../GaphLink/GaphLink'
+import { useAppSelector } from '../../hooks'
+import { selectCount } from './gameSlice'
 
-export default function App() {
+export default function Game() {
   const [nodeData, setNodeData] = useState<SimulationGaphNode[]>([])
+  const count = useAppSelector(selectCount)
+
   const width = 800
   const height = 500
+  const nodeRadius = 25
   const nodes: SimulationGaphNode[] = [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }, { id: 'e' }]
   const links: SimulationGaphLink[] = [
     { source: 'a', target: 'b', weight: 20 },
@@ -30,7 +35,7 @@ export default function App() {
       )
       .force('center', d3_force.forceCenter(width / 2, height / 2))
       .force('charge', d3_force.forceManyBody().strength(-200))
-      .force('collision', d3_force.forceCollide().radius(10))
+      .force('collision', d3_force.forceCollide().radius(nodeRadius))
       .tick(1000)
     setNodeData(simulation.nodes())
   }, [])
@@ -56,11 +61,14 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <div className="game">
       <div className="gaph-container" style={{ width: width, height: height }}>
         <svg viewBox={`0 0 ${width} ${height}`}>
+          <text x={10} y={20} fill="white">
+            Count: {count}
+          </text>
           {renderLinks(nodeData, links)}
-          {renderNodes(nodeData, 25)}
+          {renderNodes(nodeData, nodeRadius)}
         </svg>
       </div>
     </div>

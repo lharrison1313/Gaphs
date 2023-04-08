@@ -1,5 +1,4 @@
-import { SimulationGaphLink } from '../../types/d3-force'
-import { SimulationGaphNode } from '../../types/d3-force'
+import { SimulationGaphLink, SimulationGaphNode } from '../../types/d3-force'
 
 interface GaphLinkProps {
   link: SimulationGaphLink
