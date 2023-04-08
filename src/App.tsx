@@ -1,35 +1,16 @@
 import React, { ReactNode, useEffect, useState } from 'react'
 import './App.css'
 import * as d3_force from 'd3-force'
-
-interface GaphNode extends d3_force.SimulationNodeDatum {
-  id: string
-}
-
-function Node(props: any) {
-  return (
-    <g>
-      <circle cx={props.cx} cy={props.cy} r={props.r} />
-      <text
-        x={props.cx}
-        y={props.cy}
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill="white"
-      >
-        {props.text}
-      </text>
-    </g>
-  )
-}
+import { SimulationGaphNode } from './types/d3-force'
+import GaphNode from './components/GaphNode/GaphNode'
 
 export default function App() {
-  const [nodeData, setNodeData] = useState<GaphNode[]>([])
+  const [nodeData, setNodeData] = useState<SimulationGaphNode[]>([])
   const width = 800
   const height = 500
 
-  let nodes: GaphNode[] = [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }]
-  let links: d3_force.SimulationLinkDatum<GaphNode>[] = [
+  let nodes: SimulationGaphNode[] = [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }]
+  let links: d3_force.SimulationLinkDatum<SimulationGaphNode>[] = [
     { source: 'a', target: 'b' },
     { source: 'a', target: 'c' },
     { source: 'a', target: 'd' },
@@ -42,7 +23,7 @@ export default function App() {
         'link',
         d3_force
           .forceLink(links)
-          .id((d) => (d as GaphNode).id)
+          .id((d) => (d as SimulationGaphNode).id)
           .distance(100)
       )
       .force('center', d3_force.forceCenter(width / 2, height / 2))
@@ -52,12 +33,10 @@ export default function App() {
     setNodeData(simulation.nodes())
   }, [])
 
-  const renderNodes = (nodes: GaphNode[], radius: number): ReactNode[] => {
+  const renderNodes = (nodes: SimulationGaphNode[], radius: number): ReactNode[] => {
     let nodeElements: ReactNode[] = []
     nodes.forEach((node) => {
-      nodeElements.push(
-        <Node cx={node.x} cy={node.y} r={radius} text={node.id} key={node.id} />
-      )
+      nodeElements.push(<GaphNode radius={radius} node={node} />)
     })
     return nodeElements
   }
@@ -65,9 +44,7 @@ export default function App() {
   return (
     <div className="app">
       <div className="gaph-container" style={{ width: width, height: height }}>
-        <svg viewBox={`0 0 ${width} ${height}`}>
-          {renderNodes(nodeData, 25)}
-        </svg>
+        <svg viewBox={`0 0 ${width} ${height}`}>{renderNodes(nodeData, 25)}</svg>
       </div>
     </div>
   )
