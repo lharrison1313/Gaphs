@@ -4,6 +4,6 @@ export interface SimulationGaphNode extends SimulationNodeDatum {
   id: string
 }
 
-export interface SimulationGaphLink extends SimulationLinkDatum<SimulationGaphLink> {
+export interface SimulationGaphLink extends SimulationLinkDatum<SimulationGaphNode> {
   weight: number
 }
