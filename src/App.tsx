@@ -1,67 +1,74 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import './App.css'
-import { DefaultNode, Graph } from '@visx/network'
+import * as d3_force from 'd3-force'
 
-export type NetworkProps = {
-  width: number
-  height: number
+interface GaphNode extends d3_force.SimulationNodeDatum {
+  id: string
 }
 
-interface CustomNode {
-  x: number
-  y: number
-  color?: string
+function Node(props: any) {
+  return (
+    <g>
+      <circle cx={props.cx} cy={props.cy} r={props.r} />
+      <text
+        x={props.cx}
+        y={props.cy}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill="white"
+      >
+        {props.text}
+      </text>
+    </g>
+  )
 }
 
-interface CustomLink {
-  source: CustomNode
-  target: CustomNode
-  dashed?: boolean
-}
+export default function App() {
+  const [nodeData, setNodeData] = useState<GaphNode[]>([])
+  const width = 800
+  const height = 500
 
-const nodes: CustomNode[] = [
-  { x: 50, y: 20 },
-  { x: 200, y: 250 },
-  { x: 300, y: 40, color: '#26deb0' },
-]
+  let nodes: GaphNode[] = [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }]
+  let links: d3_force.SimulationLinkDatum<GaphNode>[] = [
+    { source: 'a', target: 'b' },
+    { source: 'a', target: 'c' },
+    { source: 'a', target: 'd' },
+  ]
 
-const links: CustomLink[] = [
-  { source: nodes[0], target: nodes[1] },
-  { source: nodes[1], target: nodes[2] },
-  { source: nodes[2], target: nodes[0], dashed: true },
-]
+  useEffect(() => {
+    let simulation = d3_force
+      .forceSimulation(nodes)
+      .force(
+        'link',
+        d3_force
+          .forceLink(links)
+          .id((d) => (d as GaphNode).id)
+          .distance(100)
+      )
+      .force('center', d3_force.forceCenter(width / 2, height / 2))
+      .force('charge', d3_force.forceManyBody().strength(-200))
+      .force('collision', d3_force.forceCollide().radius(10))
+      .tick(1000)
+    setNodeData(simulation.nodes())
+  }, [])
 
-const graph = {
-  nodes,
-  links,
-}
+  const renderNodes = (nodes: GaphNode[], radius: number): ReactNode[] => {
+    let nodeElements: ReactNode[] = []
+    nodes.forEach((node) => {
+      nodeElements.push(
+        <Node cx={node.x} cy={node.y} r={radius} text={node.id} key={node.id} />
+      )
+    })
+    return nodeElements
+  }
 
-export const background = '#272b4d'
-
-export default function App({ width, height }: NetworkProps) {
-  return width < 10 ? null : (
-    <svg width={width} height={height}>
-      <rect width={width} height={height} rx={14} fill={background} />
-      <Graph<CustomLink, CustomNode>
-        graph={graph}
-        top={20}
-        left={100}
-        nodeComponent={({ node: { color } }) =>
-          color ? <DefaultNode fill={color} /> : <DefaultNode />
-        }
-        linkComponent={({ link: { source, target, dashed } }) => (
-          <line
-            x1={source.x}
-            y1={source.y}
-            x2={target.x}
-            y2={target.y}
-            strokeWidth={2}
-            stroke="#999"
-            strokeOpacity={0.6}
-            strokeDasharray={dashed ? '8,4' : undefined}
-          />
-        )}
-      />
-    </svg>
+  return (
+    <div className="app">
+      <div className="gaph-container" style={{ width: width, height: height }}>
+        <svg viewBox={`0 0 ${width} ${height}`}>
+          {renderNodes(nodeData, 25)}
+        </svg>
+      </div>
+    </div>
   )
 }
