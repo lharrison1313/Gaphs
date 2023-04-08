@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect, useState } from 'react'
 import './App.css'
 import * as d3_force from 'd3-force'
-import { SimulationGaphNode } from './types/d3-force'
+import { SimulationGaphNode, SimulationGaphLink } from './types/d3-force'
 import GaphNode from './components/GaphNode/GaphNode'
 
 export default function App() {
@@ -10,10 +10,10 @@ export default function App() {
   const height = 500
 
   let nodes: SimulationGaphNode[] = [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }]
-  let links: d3_force.SimulationLinkDatum<SimulationGaphNode>[] = [
-    { source: 'a', target: 'b' },
-    { source: 'a', target: 'c' },
-    { source: 'a', target: 'd' },
+  let links: SimulationGaphLink[] = [
+    { source: 'a', target: 'b', weight: 20 },
+    { source: 'a', target: 'c', weight: 10 },
+    { source: 'a', target: 'd', weight: 5 },
   ]
 
   useEffect(() => {
