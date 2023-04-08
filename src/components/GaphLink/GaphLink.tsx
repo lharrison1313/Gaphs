@@ -1,9 +1,9 @@
-import { SimulationGaphLink, SimulationGaphNode } from '../../types/d3-force'
+import { SimulationGaphNode } from '../../types/d3-force'
 
 interface GaphLinkProps {
-  link: SimulationGaphLink
   source: SimulationGaphNode
   target: SimulationGaphNode
+  weight: number
 }
 
 export default function GaphLink(props: GaphLinkProps) {
@@ -17,7 +17,7 @@ export default function GaphLink(props: GaphLinkProps) {
         dominantBaseline="middle"
         fill="white"
       >
-        {props.link.weight}
+        {props.weight}
       </text>
     </g>
   )

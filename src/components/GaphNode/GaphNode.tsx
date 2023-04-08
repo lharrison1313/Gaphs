@@ -1,7 +1,8 @@
 import React from 'react'
 import { SimulationGaphNode } from '../../types/d3-force'
 import { useAppDispatch } from '../../hooks'
-import { incrementByAmount } from '../Game/gameSlice'
+import { selectScore, setScore } from '../Game/gameSlice'
+import { useSelector } from 'react-redux'
 
 interface GaphNodeProps {
   node: SimulationGaphNode
@@ -10,8 +11,11 @@ interface GaphNodeProps {
 
 export default function GaphNode(props: GaphNodeProps) {
   const dispatch = useAppDispatch()
+
+  const score = useSelector(selectScore)
+
   const handleNodeClick = () => {
-    dispatch(incrementByAmount(10))
+    dispatch(setScore(score + 10))
   }
 
   return (

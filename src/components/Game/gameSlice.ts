@@ -1,37 +1,40 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../../store'
+import { SimulationGaphLink, SimulationGaphNode } from '../../types/d3-force'
+import { cloneDeep } from 'lodash'
 
-// Define a type for the slice state
 interface GameState {
-  value: number
+  nodes: SimulationGaphNode[]
+  links: SimulationGaphLink[]
+  score: number
 }
 
-// Define the initial state using that type
 const initialState: GameState = {
-  value: 0,
+  nodes: [],
+  links: [],
+  score: 0,
 }
 
 export const gameSlice = createSlice({
   name: 'game',
-  // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    increment: (state) => {
-      state.value += 1
+    setScore: (state, action: PayloadAction<number>) => {
+      state.score = action.payload
     },
-    decrement: (state) => {
-      state.value -= 1
+    setNodes: (state, action: PayloadAction<SimulationGaphNode[]>) => {
+      state.nodes = cloneDeep(action.payload)
     },
-    // Use the PayloadAction type to declare the contents of `action.payload`
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload
+    setLinks: (state, action: PayloadAction<SimulationGaphLink[]>) => {
+      state.links = cloneDeep(action.payload)
     },
   },
 })
 
-export const { increment, decrement, incrementByAmount } = gameSlice.actions
+export const { setScore, setNodes, setLinks } = gameSlice.actions
 
-// Other code such as selectors can use the imported `RootState` type
-export const selectCount = (state: RootState) => state.game.value
+export const selectScore = (state: RootState) => state.game.score
+export const selectNodes = (state: RootState) => state.game.nodes
+export const selectLinks = (state: RootState) => state.game.links
 
 export default gameSlice.reducer
