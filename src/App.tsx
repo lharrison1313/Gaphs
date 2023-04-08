@@ -9,11 +9,13 @@ export default function App() {
   const [nodeData, setNodeData] = useState<SimulationGaphNode[]>([])
   const width = 800
   const height = 500
-  const nodes: SimulationGaphNode[] = [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }]
+  const nodes: SimulationGaphNode[] = [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }, { id: 'e' }]
   const links: SimulationGaphLink[] = [
     { source: 'a', target: 'b', weight: 20 },
     { source: 'a', target: 'c', weight: 10 },
     { source: 'a', target: 'd', weight: 5 },
+    { source: 'd', target: 'e', weight: 2 },
+    { source: 'b', target: 'c', weight: 8 },
   ]
 
   useEffect(() => {
@@ -24,7 +26,7 @@ export default function App() {
         d3_force
           .forceLink(links)
           .id((d) => (d as SimulationGaphNode).id)
-          .distance(100)
+          .distance(125)
       )
       .force('center', d3_force.forceCenter(width / 2, height / 2))
       .force('charge', d3_force.forceManyBody().strength(-200))
