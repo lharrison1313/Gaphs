@@ -1,8 +1,7 @@
 import React from 'react'
-import { SimulationGaphLinkAndNodes, SimulationGaphNode } from '../../types/d3-force'
+import { SimulationGaphNode } from '../../types/d3-force'
 import { useAppDispatch } from '../../hooks'
-import { incrementScore, pushNode, selectLinks, selectNodeStack } from '../Game/gameSlice'
-import { useSelector } from 'react-redux'
+import { pushNode } from '../Game/gameSlice'
 
 interface GaphNodeProps {
   node: SimulationGaphNode

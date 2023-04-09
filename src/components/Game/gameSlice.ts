@@ -1,4 +1,4 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../../store'
 import { SimulationGaphLinkAndNodes, SimulationGaphNode } from '../../types/d3-force'
 import { cloneDeep } from 'lodash'
@@ -48,9 +48,5 @@ export const selectScore = (state: RootState) => state.game.score
 export const selectNodes = (state: RootState) => state.game.nodes
 export const selectLinks = (state: RootState) => state.game.links
 export const selectNodeStack = (state: RootState) => state.game.nodeStack
-
-export const selectSpecificNodes = createSelector([selectNodes, (state: RootState, id: string) => id], (nodes, id) =>
-  nodes.find((node) => node.id === id)
-)
 
 export default gameSlice.reducer
