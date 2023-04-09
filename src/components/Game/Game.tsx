@@ -5,7 +5,19 @@ import { SimulationGaphNode, SimulationGaphLink, SimulationGaphLinkAndNodes } fr
 import GaphNode from '../GaphNode/GaphNode'
 import GaphLink from '../GaphLink/GaphLink'
 import { useAppSelector, useAppDispatch } from '../../hooks'
-import { incrementScore, selectLinks, selectNodeStack, selectNodes, selectScore, setLinks, setNodes, updateNode } from './gameSlice'
+import {
+  incrementScore,
+  pushNode,
+  selectActiveNode,
+  selectLinks,
+  selectNodeStack,
+  selectNodes,
+  selectScore,
+  setLinks,
+  setNodes,
+  updateLink,
+  updateNode,
+} from './gameSlice'
 import { cloneDeep } from 'lodash'
 
 export default function Game() {
@@ -14,6 +26,7 @@ export default function Game() {
   const nodes: SimulationGaphNode[] = useAppSelector(selectNodes)
   const links: SimulationGaphLinkAndNodes[] = useAppSelector(selectLinks)
   const nodeStack: string[] = useAppSelector(selectNodeStack)
+  const activeNode: SimulationGaphNode = useAppSelector(selectActiveNode)
 
   const width = 800
   const height = 500
@@ -27,12 +40,12 @@ export default function Game() {
     { id: 'e', clickedCount: 0 },
   ]
   const linkData: SimulationGaphLink[] = [
-    { source: 'a', target: 'b', weight: 20 },
-    { source: 'a', target: 'c', weight: 10 },
-    { source: 'a', target: 'd', weight: 5 },
-    { source: 'd', target: 'e', weight: 2 },
-    { source: 'b', target: 'c', weight: 8 },
-    { source: 'e', target: 'b', weight: 4 },
+    { source: 'a', target: 'b', weight: 20, crossedCount: 0 },
+    { source: 'a', target: 'c', weight: 10, crossedCount: 0 },
+    { source: 'a', target: 'd', weight: 5, crossedCount: 0 },
+    { source: 'd', target: 'e', weight: 2, crossedCount: 0 },
+    { source: 'b', target: 'c', weight: 8, crossedCount: 0 },
+    { source: 'e', target: 'b', weight: 4, crossedCount: 0 },
   ]
 
   useEffect(() => {
@@ -52,26 +65,35 @@ export default function Game() {
   }, [])
 
   useEffect(() => {
-    console.log(nodeStack)
-    //get current and prev node
-    let currentNodeID = nodeStack[nodeStack.length - 1]
-    let prevNodeID = nodeStack[nodeStack.length - 2]
-    //find link weight
-    let linkWeight = links.find(
-      (link) =>
-        (link.source.id === prevNodeID && link.target.id === currentNodeID) || (link.source.id === currentNodeID && link.target.id === prevNodeID)
-    )?.weight
-    //increment score
-    if (linkWeight) {
-      dispatch(incrementScore(linkWeight))
+    if (activeNode.id !== '') {
+      console.log(nodeStack)
+      let currentNodeID = activeNode.id
+      let prevNodeID = nodeStack[nodeStack.length - 1]
+      //find link weight
+      let link = links.find(
+        (link) =>
+          (link.source.id === prevNodeID && link.target.id === currentNodeID) || (link.source.id === currentNodeID && link.target.id === prevNodeID)
+      )
+      //if link weight update score and clicked/cross totals
+      if (link) {
+        let newNode = cloneDeep(activeNode)
+        newNode.clickedCount++
+        let newLink = cloneDeep(link)
+        newLink.crossedCount++
+        dispatch(pushNode(activeNode.id))
+        dispatch(incrementScore(link.weight))
+        dispatch(updateNode(newNode))
+        dispatch(updateLink(newLink))
+      }
+      //otherwise if first item in node stack push and update click totals
+      else if (nodeStack.length === 0) {
+        let newNode = cloneDeep(activeNode)
+        newNode.clickedCount++
+        dispatch(updateNode(newNode))
+        dispatch(pushNode(activeNode.id))
+      }
     }
-    //update node state with click totals
-    let newNode = cloneDeep(nodes.find((node) => node.id === currentNodeID))
-    if (newNode && (linkWeight || nodeStack.length === 1)) {
-      newNode.clickedCount++
-      dispatch(updateNode(newNode))
-    }
-  }, [nodeStack])
+  }, [activeNode])
 
   const renderNodes = (nodes: SimulationGaphNode[], radius: number): ReactNode[] => {
     let nodeElements: ReactNode[] = []

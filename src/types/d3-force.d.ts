@@ -7,6 +7,7 @@ export interface SimulationGaphNode extends SimulationNodeDatum {
 
 export interface SimulationGaphLink extends SimulationLinkDatum<SimulationGaphNode> {
   weight: number
+  crossedCount: number
 }
 
 export interface SimulationGaphLinkAndNodes extends Omit<SimulationGaphLink, 'source' | 'target'> {

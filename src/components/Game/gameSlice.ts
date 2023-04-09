@@ -5,6 +5,7 @@ import { cloneDeep } from 'lodash'
 
 interface GameState {
   nodes: SimulationGaphNode[]
+  activeNode: SimulationGaphNode
   links: SimulationGaphLinkAndNodes[]
   nodeStack: string[]
   score: number
@@ -12,6 +13,7 @@ interface GameState {
 
 const initialState: GameState = {
   nodes: [],
+  activeNode: { id: '', clickedCount: 0 },
   links: [],
   nodeStack: [],
   score: 0,
@@ -33,20 +35,30 @@ export const gameSlice = createSlice({
     setLinks: (state, action: PayloadAction<SimulationGaphLinkAndNodes[]>) => {
       state.links = cloneDeep(action.payload)
     },
+    updateLink: (state, action: PayloadAction<SimulationGaphLinkAndNodes>) => {
+      let newLinks = cloneDeep(state.links)
+      let replaceIndex = newLinks.findIndex((link) => link.source.id === action.payload.source.id && link.target.id === action.payload.target.id)
+      newLinks[replaceIndex] = action.payload
+      state.links = newLinks
+    },
     incrementScore: (state, action: PayloadAction<number>) => {
       state.score += action.payload
     },
     pushNode: (state, action: PayloadAction<string>) => {
       state.nodeStack.push(action.payload)
     },
+    activateNode: (state, action: PayloadAction<SimulationGaphNode>) => {
+      state.activeNode = cloneDeep(action.payload)
+    },
   },
 })
 
-export const { incrementScore, setNodes, setLinks, pushNode, updateNode } = gameSlice.actions
+export const { incrementScore, setNodes, setLinks, pushNode, updateNode, updateLink, activateNode } = gameSlice.actions
 
 export const selectScore = (state: RootState) => state.game.score
 export const selectNodes = (state: RootState) => state.game.nodes
 export const selectLinks = (state: RootState) => state.game.links
+export const selectActiveNode = (state: RootState) => state.game.activeNode
 export const selectNodeStack = (state: RootState) => state.game.nodeStack
 
 export default gameSlice.reducer
