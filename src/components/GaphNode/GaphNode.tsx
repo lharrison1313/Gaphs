@@ -3,7 +3,6 @@ import { SimulationGaphNode } from '../../types/d3-force'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { activateNode, selectNodeStack } from '../Game/gameSlice'
 import { useSpringRef, useSpring, animated, SpringConfig } from 'react-spring'
-import { ReactComponent as HomeIconWhite } from '../../images/home-white.svg'
 
 interface GaphNodeProps {
   node: SimulationGaphNode
@@ -29,7 +28,7 @@ export default function GaphNode(props: GaphNodeProps) {
   }
 
   const animation = useSpringRef()
-  const config: SpringConfig = { duration: 150 }
+  const circleConfig: SpringConfig = { duration: 150 }
   const circleProps = useSpring({
     ref: animation,
     from: { r: props.radius, fill: getNodeColor(props.node.clickedCount - 1) },
@@ -37,7 +36,13 @@ export default function GaphNode(props: GaphNodeProps) {
       { r: props.radius * 0.75, fill: getNodeColor(props.node.clickedCount) },
       { r: props.radius, fill: getNodeColor(props.node.clickedCount) },
     ],
-    config: config,
+    config: circleConfig,
+  })
+  const homeConfig: SpringConfig = { duration: 250 }
+  const homeProps = useSpring({
+    from: { r: props.radius * 0.25 },
+    to: [{ r: props.radius * 0.15 }, { r: props.radius * 0.25 }],
+    config: homeConfig,
   })
 
   const handleNodeClick = () => {
@@ -53,12 +58,7 @@ export default function GaphNode(props: GaphNodeProps) {
     <g onClick={handleNodeClick}>
       <animated.circle cx={props.node.x} cy={props.node.y} r={circleProps.r} fill={circleProps.fill}></animated.circle>
       {nodeStack[0] === props.node.id && (
-        <HomeIconWhite
-          x={(props.node.x ?? 0) - props.radius * 0.5}
-          y={(props.node.y ?? 0) - props.radius * 0.5}
-          width={props.radius}
-          height={props.radius}
-        />
+        <animated.circle cx={props.node.x} cy={props.node.y} r={nodeStack[0] === props.node.id ? homeProps.r : props.radius * 0.25} fill="white" />
       )}
     </g>
   )
