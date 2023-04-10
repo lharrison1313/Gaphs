@@ -152,15 +152,14 @@ export default function Game() {
         </div>
         <div className="rules-container">
           <p>
-            <b>How To Play:</b> The goal of the game is to find the <b>shortest possible route</b> that visits each node and returns back to the
-            origin node.
+            <b>How To Play:</b> The goal of the game is to find the shortest possible route that visits each node and returns back to the origin node.
           </p>
           <ul>
             <li>
-              <b>Choose your destiny:</b> You may start at <b>any</b> node of your choice.
+              <b>Choose your destiny:</b> You may start at any node of your choice.
             </li>
             <li>
-              <b>Dont get greedy:</b> You may not visit the same node <b>more than 3 times</b> unless its the final visit to the origin node.
+              <b>Dont get greedy:</b> You may not visit the same node more than 3 times unless its the final visit to the origin node.
             </li>
             <li>
               <b>Time is of the essence:</b> Each second you waste counts against your score.
