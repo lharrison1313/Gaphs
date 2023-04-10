@@ -11,13 +11,13 @@ export default function GaphLink(props: GaphLinkProps) {
     switch (clickedCount) {
       case -1:
       case 0:
-        return 'grey'
+        return '#3D4B6B'
       case 1:
-        return 'black'
+        return '#276FAB'
       case 2:
-        return 'blue'
+        return '#db8830'
       default:
-        return 'red'
+        return '#db3030'
     }
   }
 
@@ -36,7 +36,14 @@ export default function GaphLink(props: GaphLinkProps) {
 
   return (
     <g>
-      <animated.line x1={props.link.source.x} y1={props.link.source.y} x2={props.link.target.x} y2={props.link.target.y} stroke={linkProps.color} />
+      <animated.line
+        x1={props.link.source.x}
+        y1={props.link.source.y}
+        x2={props.link.target.x}
+        y2={props.link.target.y}
+        stroke={linkProps.color}
+        strokeWidth={5}
+      />
       <text
         x={((props.link.source.x ?? 0) + (props.link.target.x ?? 0)) / 2}
         y={((props.link.source.y ?? 0) + (props.link.target.y ?? 0)) / 2}

@@ -17,13 +17,13 @@ export default function GaphNode(props: GaphNodeProps) {
     switch (clickedCount) {
       case -1:
       case 0:
-        return 'grey'
+        return '#3D4B6B'
       case 1:
-        return 'black'
+        return '#276FAB'
       case 2:
-        return 'blue'
+        return '#db8830'
       default:
-        return 'red'
+        return '#db3030'
     }
   }
 

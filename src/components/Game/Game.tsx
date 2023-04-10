@@ -28,8 +28,8 @@ export default function Game() {
   const nodeStack: string[] = useAppSelector(selectNodeStack)
   const activeNode: SimulationGaphNode = useAppSelector(selectActiveNode)
 
-  const width = 800
-  const height = 500
+  const width = 500
+  const height = 450
   const nodeRadius = 25
   const nodeDistance = 125
   const nodeData: SimulationGaphNode[] = [
@@ -74,7 +74,7 @@ export default function Game() {
         (link) =>
           (link.source.id === prevNodeID && link.target.id === currentNodeID) || (link.source.id === currentNodeID && link.target.id === prevNodeID)
       )
-      //if link weight update score and clicked/cross totals
+      //if link exists update score and clicked/cross totals
       if (link) {
         let newNode = cloneDeep(activeNode)
         newNode.clickedCount++
@@ -95,6 +95,13 @@ export default function Game() {
     }
   }, [activeNode])
 
+  useEffect(() => {
+    let allNodesClicked = nodes.every((node) => node.clickedCount > 0)
+    if (allNodesClicked && nodeStack[0] === nodeStack[nodeStack.length - 1] && nodeStack.length > 0) {
+      alert('win!')
+    }
+  }, [nodeStack])
+
   const renderNodes = (nodes: SimulationGaphNode[], radius: number): ReactNode[] => {
     let nodeElements: ReactNode[] = []
     nodes.forEach((node) => {
@@ -112,16 +119,25 @@ export default function Game() {
   }
 
   return (
-    <div className="game">
-      <div className="gaph-container" style={{ width: width, height: height }}>
-        <svg viewBox={`0 0 ${width} ${height}`}>
-          <text x={10} y={20} fill="white">
-            score: {score}
-          </text>
-          {renderLinks(links)}
-          {renderNodes(nodes, nodeRadius)}
-        </svg>
+    <div className="container">
+      <div className="left-nav"></div>
+      <div className="game">
+        <div className="title-container">
+          <h1>GAPHS</h1>
+        </div>
+        <div className="controls-container">
+          <h2>Score: {score}</h2>
+        </div>
+        <div className="gaph-container">
+          <div className="gaph" style={{ width: width, height: height }}>
+            <svg viewBox={`0 0 ${width} ${height}`}>
+              {renderLinks(links)}
+              {renderNodes(nodes, nodeRadius)}
+            </svg>
+          </div>
+        </div>
       </div>
+      <div className="right-nav"></div>
     </div>
   )
 }

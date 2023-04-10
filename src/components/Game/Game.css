@@ -1,9 +1,42 @@
-.game {
+h1,
+h2 {
+  margin: 0;
+}
+
+.container {
   display: flex;
-  align-items: center;
+}
+
+.left-nav,
+.right-nav {
+  display: flex;
+  flex: 1;
+}
+
+.game {
+  padding-top: 25px;
+  display: flex;
+  flex: 1;
+  height: 100%;
+  flex-direction: column;
+  color: #3d4b6b;
+}
+
+.title-container {
+  display: flex;
   justify-content: center;
 }
 
+.controls-container {
+  display: flex;
+}
+
 .gaph-container {
-  background-color: maroon;
+  display: flex;
+  justify-content: center;
+}
+
+.gaph {
+  background-color: #64c8e6;
+  border-radius: 10px;
 }
