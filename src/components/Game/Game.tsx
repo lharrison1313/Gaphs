@@ -136,6 +136,20 @@ export default function Game() {
             </svg>
           </div>
         </div>
+        <div className="rules-container">
+          <p>
+            <b>How To Play:</b> The goal of the game is to find the <b>shortest possible route</b> that visits each node and returns back to the
+            origin node.
+          </p>
+          <ul>
+            <li>
+              You may start at <b>any</b> node of your choice.
+            </li>
+            <li>
+              You must not visit the same node <b>more than 3 times</b> unless its the final visit to the origin node.
+            </li>
+          </ul>
+        </div>
       </div>
       <div className="right-nav"></div>
     </div>
