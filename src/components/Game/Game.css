@@ -3,6 +3,11 @@ h2 {
   margin: 0;
 }
 
+text {
+  font-weight: bold;
+  font-size: 20px;
+}
+
 .container {
   display: flex;
 }

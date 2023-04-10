@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import './Game.css'
 import * as d3_force from 'd3-force'
 import { SimulationGaphNode, SimulationGaphLink, SimulationGaphLinkAndNodes } from '../../types/d3-force'
@@ -28,6 +28,8 @@ export default function Game() {
   const nodeStack: string[] = useAppSelector(selectNodeStack)
   const activeNode: SimulationGaphNode = useAppSelector(selectActiveNode)
 
+  const [timer, setTimer] = useState(0)
+
   const width = 500
   const height = 450
   const nodeRadius = 25
@@ -38,14 +40,18 @@ export default function Game() {
     { id: 'c', clickedCount: 0 },
     { id: 'd', clickedCount: 0 },
     { id: 'e', clickedCount: 0 },
+    { id: 'f', clickedCount: 0 },
+    { id: 'g', clickedCount: 0 },
   ]
   const linkData: SimulationGaphLink[] = [
     { source: 'a', target: 'b', weight: 20, crossedCount: 0 },
-    { source: 'a', target: 'c', weight: 10, crossedCount: 0 },
     { source: 'a', target: 'd', weight: 5, crossedCount: 0 },
     { source: 'd', target: 'e', weight: 2, crossedCount: 0 },
     { source: 'b', target: 'c', weight: 8, crossedCount: 0 },
     { source: 'e', target: 'b', weight: 4, crossedCount: 0 },
+    { source: 'e', target: 'f', weight: 13, crossedCount: 0 },
+    { source: 'f', target: 'c', weight: 7, crossedCount: 0 },
+    { source: 'g', target: 'f', weight: 1, crossedCount: 0 },
   ]
 
   useEffect(() => {
@@ -57,7 +63,7 @@ export default function Game() {
       .forceSimulation(nodeData)
       .force('link', forceLink)
       .force('center', d3_force.forceCenter(width / 2, height / 2))
-      .force('charge', d3_force.forceManyBody().strength(-200))
+      .force('charge', d3_force.forceManyBody().strength(-300))
       .force('collision', d3_force.forceCollide().radius(nodeRadius))
       .tick(1000)
     dispatch(setNodes(simulation.nodes()))
@@ -91,6 +97,11 @@ export default function Game() {
         newNode.clickedCount++
         dispatch(updateNode(newNode))
         dispatch(pushNode(activeNode.id))
+        //start timer that increments score every second
+        let timerID = window.setInterval(() => {
+          dispatch(incrementScore(1))
+        }, 1000)
+        setTimer(timerID)
       }
     }
   }, [activeNode])
@@ -98,6 +109,9 @@ export default function Game() {
   useEffect(() => {
     let allNodesClicked = nodes.every((node) => node.clickedCount > 0)
     if (allNodesClicked && nodeStack[0] === nodeStack[nodeStack.length - 1] && nodeStack.length > 0) {
+      //stop the timer
+      clearInterval(timer)
+      //victory
       alert('win!')
     }
   }, [nodeStack])
@@ -143,10 +157,13 @@ export default function Game() {
           </p>
           <ul>
             <li>
-              You may start at <b>any</b> node of your choice.
+              <b>Choose your destiny:</b> You may start at <b>any</b> node of your choice.
             </li>
             <li>
-              You must not visit the same node <b>more than 3 times</b> unless its the final visit to the origin node.
+              <b>Dont get greedy:</b> You may not visit the same node <b>more than 3 times</b> unless its the final visit to the origin node.
+            </li>
+            <li>
+              <b>Time is of the essence:</b> Each second you waste counts against your score.
             </li>
           </ul>
         </div>
