@@ -47,6 +47,7 @@ text {
 .controls-left {
   display: flex;
   flex: 1;
+  flex-direction: column;
 }
 
 .button {
@@ -72,6 +73,10 @@ text {
 .gaph {
   background-color: #64c8e6;
   border-radius: 15px;
+}
+
+circle:hover {
+  cursor: pointer;
 }
 
 .rules-container {

@@ -18,11 +18,15 @@ import {
   updateLink,
   updateNode,
   resetGame,
+  selectPath,
+  incrementPath,
 } from './gameSlice'
 import { cloneDeep } from 'lodash'
 
 export default function Game() {
   const dispatch = useAppDispatch()
+
+  const path = useAppSelector(selectPath)
   const score = useAppSelector(selectScore)
   const nodes: SimulationGaphNode[] = useAppSelector(selectNodes)
   const links: SimulationGaphLinkAndNodes[] = useAppSelector(selectLinks)
@@ -77,6 +81,7 @@ export default function Game() {
         newLink.crossedCount++
         dispatch(pushNode(activeNode.id))
         dispatch(incrementScore(link.weight))
+        dispatch(incrementPath(link.weight))
         dispatch(updateNode(newNode))
         dispatch(updateLink(newLink))
       }
@@ -152,7 +157,8 @@ export default function Game() {
         </div>
         <div className="controls-container">
           <div className="controls-left">
-            <h2>Score: {score}</h2>
+            <h2 className="controls-header">Score: {score}</h2>
+            <h2 className="controls-header">Path: {path}</h2>
           </div>
           <div className="controls-right">
             <div className="button" onClick={handleResetGame}>

@@ -9,6 +9,7 @@ interface GameState {
   links: SimulationGaphLinkAndNodes[]
   nodeStack: string[]
   score: number
+  path: number
 }
 
 const initialState: GameState = {
@@ -17,6 +18,7 @@ const initialState: GameState = {
   links: [],
   nodeStack: [],
   score: 0,
+  path: 0,
 }
 
 export const gameSlice = createSlice({
@@ -44,6 +46,9 @@ export const gameSlice = createSlice({
     incrementScore: (state, action: PayloadAction<number>) => {
       state.score += action.payload
     },
+    incrementPath: (state, action: PayloadAction<number>) => {
+      state.path += action.payload
+    },
     pushNode: (state, action: PayloadAction<string>) => {
       state.nodeStack.push(action.payload)
     },
@@ -57,14 +62,16 @@ export const gameSlice = createSlice({
         links: [],
         nodeStack: [],
         score: 0,
+        path: 0,
       }
     },
   },
 })
 
-export const { incrementScore, setNodes, setLinks, pushNode, updateNode, updateLink, activateNode, resetGame } = gameSlice.actions
+export const { incrementScore, setNodes, setLinks, pushNode, updateNode, updateLink, activateNode, resetGame, incrementPath } = gameSlice.actions
 
 export const selectScore = (state: RootState) => state.game.score
+export const selectPath = (state: RootState) => state.game.path
 export const selectNodes = (state: RootState) => state.game.nodes
 export const selectLinks = (state: RootState) => state.game.links
 export const selectActiveNode = (state: RootState) => state.game.activeNode
