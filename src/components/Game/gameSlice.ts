@@ -50,10 +50,19 @@ export const gameSlice = createSlice({
     activateNode: (state, action: PayloadAction<SimulationGaphNode>) => {
       state.activeNode = cloneDeep(action.payload)
     },
+    resetGame: () => {
+      return {
+        nodes: [],
+        activeNode: { id: '', clickedCount: 0 },
+        links: [],
+        nodeStack: [],
+        score: 0,
+      }
+    },
   },
 })
 
-export const { incrementScore, setNodes, setLinks, pushNode, updateNode, updateLink, activateNode } = gameSlice.actions
+export const { incrementScore, setNodes, setLinks, pushNode, updateNode, updateLink, activateNode, resetGame } = gameSlice.actions
 
 export const selectScore = (state: RootState) => state.game.score
 export const selectNodes = (state: RootState) => state.game.nodes

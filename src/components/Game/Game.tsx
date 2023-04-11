@@ -17,6 +17,7 @@ import {
   setNodes,
   updateLink,
   updateNode,
+  resetGame,
 } from './gameSlice'
 import { cloneDeep } from 'lodash'
 
@@ -55,19 +56,7 @@ export default function Game() {
   ]
 
   useEffect(() => {
-    let forceLink = d3_force
-      .forceLink(linkData)
-      .id((d) => (d as SimulationGaphNode).id)
-      .distance(nodeDistance)
-    let simulation = d3_force
-      .forceSimulation(nodeData)
-      .force('link', forceLink)
-      .force('center', d3_force.forceCenter(width / 2, height / 2))
-      .force('charge', d3_force.forceManyBody().strength(-300))
-      .force('collision', d3_force.forceCollide().radius(nodeRadius))
-      .tick(1000)
-    dispatch(setNodes(simulation.nodes()))
-    dispatch(setLinks(forceLink.links() as SimulationGaphLinkAndNodes[]))
+    initGame()
   }, [])
 
   useEffect(() => {
@@ -116,6 +105,28 @@ export default function Game() {
     }
   }, [nodeStack])
 
+  const initGame = () => {
+    let forceLink = d3_force
+      .forceLink(linkData)
+      .id((d) => (d as SimulationGaphNode).id)
+      .distance(nodeDistance)
+    let simulation = d3_force
+      .forceSimulation(nodeData)
+      .force('link', forceLink)
+      .force('center', d3_force.forceCenter(width / 2, height / 2))
+      .force('charge', d3_force.forceManyBody().strength(-300))
+      .force('collision', d3_force.forceCollide().radius(nodeRadius))
+      .tick(1000)
+    dispatch(setNodes(simulation.nodes()))
+    dispatch(setLinks(forceLink.links() as SimulationGaphLinkAndNodes[]))
+  }
+
+  const handleResetGame = () => {
+    clearInterval(timer)
+    dispatch(resetGame())
+    initGame()
+  }
+
   const renderNodes = (nodes: SimulationGaphNode[], radius: number): ReactNode[] => {
     let nodeElements: ReactNode[] = []
     nodes.forEach((node) => {
@@ -140,7 +151,15 @@ export default function Game() {
           <h1>GAPHS</h1>
         </div>
         <div className="controls-container">
-          <h2>Score: {score}</h2>
+          <div className="controls-left">
+            <h2>Score: {score}</h2>
+          </div>
+          <div className="controls-right">
+            <div className="button" onClick={handleResetGame}>
+              Restart
+            </div>
+            <div className="button">New</div>
+          </div>
         </div>
         <div className="gaph-container">
           <div className="gaph" style={{ width: width, height: height }}>
