@@ -37,8 +37,8 @@ export default function Game() {
 
   const width = 500
   const height = 450
-  const nodeRadius = 25
-  const nodeDistance = 200
+  const nodeRadius = 20
+  const nodeDistance = 75
 
   useEffect(() => {
     initGame()
@@ -92,7 +92,7 @@ export default function Game() {
   }, [nodeStack])
 
   const initGame = () => {
-    let graph = generateRandomGraph(5, 6)
+    let graph = generateRandomGraph(6, 7)
     let nodeData: SimulationGaphNode[] = graph.nodes
     let linkData: SimulationGaphLink[] = graph.edges
     let forceLink = d3_force
@@ -103,8 +103,8 @@ export default function Game() {
       .forceSimulation(nodeData)
       .force('link', forceLink)
       .force('center', d3_force.forceCenter(width / 2, height / 2))
-      .force('charge', d3_force.forceManyBody().strength(-300))
-      .force('collision', d3_force.forceCollide().radius(nodeRadius + 10))
+      .force('collision', d3_force.forceCollide().radius(nodeRadius))
+      .force('charge', d3_force.forceManyBody().strength(-1000))
       .tick(500)
     dispatch(setNodes(simulation.nodes()))
     dispatch(setLinks(forceLink.links() as SimulationGaphLinkAndNodes[]))
