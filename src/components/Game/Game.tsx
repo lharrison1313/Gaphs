@@ -38,26 +38,7 @@ export default function Game() {
   const width = 500
   const height = 450
   const nodeRadius = 25
-  const nodeDistance = 125
-  const nodeData: SimulationGaphNode[] = [
-    { id: 'a', clickedCount: 0 },
-    { id: 'b', clickedCount: 0 },
-    { id: 'c', clickedCount: 0 },
-    { id: 'd', clickedCount: 0 },
-    { id: 'e', clickedCount: 0 },
-    { id: 'f', clickedCount: 0 },
-    { id: 'g', clickedCount: 0 },
-  ]
-  const linkData: SimulationGaphLink[] = [
-    { source: 'a', target: 'b', weight: 20, crossedCount: 0 },
-    { source: 'a', target: 'd', weight: 5, crossedCount: 0 },
-    { source: 'd', target: 'e', weight: 2, crossedCount: 0 },
-    { source: 'b', target: 'c', weight: 8, crossedCount: 0 },
-    { source: 'e', target: 'b', weight: 4, crossedCount: 0 },
-    { source: 'e', target: 'f', weight: 13, crossedCount: 0 },
-    { source: 'f', target: 'c', weight: 7, crossedCount: 0 },
-    { source: 'g', target: 'f', weight: 1, crossedCount: 0 },
-  ]
+  const nodeDistance = 200
 
   useEffect(() => {
     initGame()
@@ -111,6 +92,9 @@ export default function Game() {
   }, [nodeStack])
 
   const initGame = () => {
+    let graph = generateRandomGraph(5, 6)
+    let nodeData: SimulationGaphNode[] = graph.nodes
+    let linkData: SimulationGaphLink[] = graph.edges
     let forceLink = d3_force
       .forceLink(linkData)
       .id((d) => (d as SimulationGaphNode).id)
@@ -120,8 +104,8 @@ export default function Game() {
       .force('link', forceLink)
       .force('center', d3_force.forceCenter(width / 2, height / 2))
       .force('charge', d3_force.forceManyBody().strength(-300))
-      .force('collision', d3_force.forceCollide().radius(nodeRadius))
-      .tick(1000)
+      .force('collision', d3_force.forceCollide().radius(nodeRadius + 10))
+      .tick(500)
     dispatch(setNodes(simulation.nodes()))
     dispatch(setLinks(forceLink.links() as SimulationGaphLinkAndNodes[]))
   }
@@ -195,4 +179,60 @@ export default function Game() {
       <div className="right-nav"></div>
     </div>
   )
+}
+
+function generateRandomGraph(numNodes: number, numEdges: number) {
+  let nodes: SimulationGaphNode[] = []
+  let edges: SimulationGaphLink[] = []
+  let alphabet = Array.from('abcdefghijklmnopqrstuvwxyz')
+  let possibleEdges: { source: string; target: string }[] = []
+
+  // Create nodes with random IDs
+  for (let i = 0; i < numNodes; i++) {
+    let nodeId = alphabet.splice(Math.floor(Math.random() * alphabet.length), 1)[0]
+    nodes.push({ id: nodeId, clickedCount: 0 })
+  }
+
+  // Create list of all possible edge source and target pairs
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = 0; j < nodes.length; j++) {
+      if (i !== j) {
+        let source = nodes[i].id
+        let target = nodes[j].id
+
+        // Exclude pairs with the same source and target nodes
+        if (source !== target && !possibleEdges.some((edge) => edge.source === target && edge.target === source)) {
+          possibleEdges.push({ source: source, target: target })
+        }
+      }
+    }
+  }
+
+  // Create edges with random weights
+  for (let i = 0; i < numEdges; i++) {
+    // Choose a random index from the list of possible edges
+    let randomIndex = Math.floor(Math.random() * possibleEdges.length)
+
+    // Get the source and target from the chosen edge
+    let source = possibleEdges[randomIndex].source
+    let target = possibleEdges[randomIndex].target
+
+    // Remove the chosen edge from the list of possible edges
+    possibleEdges.splice(randomIndex, 1)
+
+    // Add the edge to the edges array with a random weight
+    let weight = Math.floor(Math.random() * 20) + 1
+    let edge = { source: source, target: target, crossedCount: 0, weight: weight }
+    edges.push(edge)
+  }
+
+  //prune ophaned nodes
+  let finalNodes: SimulationGaphNode[] = []
+  nodes.forEach((node) => {
+    if (edges.findIndex((edge) => edge.source === node.id || edge.target === node.id) > -1) {
+      finalNodes.push(node)
+    }
+  })
+
+  return { nodes: finalNodes, edges: edges }
 }
