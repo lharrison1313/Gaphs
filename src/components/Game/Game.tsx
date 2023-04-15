@@ -2,6 +2,7 @@ import React, { ReactNode, useEffect, useState } from 'react'
 import './Game.css'
 import * as d3_force from 'd3-force'
 import { SimulationGaphNode, SimulationGaphLink, SimulationGaphLinkAndNodes } from '../../types/d3-force'
+import boundary from 'd3-force-boundary'
 import GaphNode from '../GaphNode/GaphNode'
 import GaphLink from '../GaphLink/GaphLink'
 import { useAppSelector, useAppDispatch } from '../../hooks'
@@ -104,7 +105,8 @@ export default function Game() {
       .force('link', forceLink)
       .force('center', d3_force.forceCenter(width / 2, height / 2))
       .force('collision', d3_force.forceCollide().radius(nodeRadius))
-      .force('charge', d3_force.forceManyBody().strength(-1000))
+      .force('charge', d3_force.forceManyBody().strength(-2000))
+      .force('boundary', boundary(0, 0, width, height))
       .tick(500)
     dispatch(setNodes(simulation.nodes()))
     dispatch(setLinks(forceLink.links() as SimulationGaphLinkAndNodes[]))
