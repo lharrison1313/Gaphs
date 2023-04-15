@@ -33,8 +33,10 @@ export default function Game() {
   const links: SimulationGaphLinkAndNodes[] = useAppSelector(selectLinks)
   const nodeStack: string[] = useAppSelector(selectNodeStack)
   const activeNode: SimulationGaphNode = useAppSelector(selectActiveNode)
+  type Graph = { nodes: SimulationGaphNode[]; edges: SimulationGaphLink[] }
 
   const [timer, setTimer] = useState(0)
+  const [emptyGraph, setEmptyGraph] = useState<Graph>({ nodes: [], edges: [] })
 
   const width = 500
   const height = 450
@@ -42,7 +44,7 @@ export default function Game() {
   const nodeDistance = 75
 
   useEffect(() => {
-    initGame()
+    initGame(true)
   }, [])
 
   useEffect(() => {
@@ -92,8 +94,15 @@ export default function Game() {
     }
   }, [nodeStack])
 
-  const initGame = () => {
-    let graph = generateRandomGraph(6, 7)
+  const initGame = (newGraph: boolean) => {
+    let graph
+    if (newGraph) {
+      graph = generateRandomGraph(6, 7)
+      setEmptyGraph(graph)
+    } else {
+      graph = emptyGraph
+    }
+
     let nodeData: SimulationGaphNode[] = graph.nodes
     let linkData: SimulationGaphLink[] = graph.edges
     let forceLink = d3_force
@@ -107,7 +116,7 @@ export default function Game() {
       .force('collision', d3_force.forceCollide().radius(nodeRadius))
       .force('charge', d3_force.forceManyBody().strength(-2000))
       .force('boundary', boundary(0, 0, width, height))
-      .tick(500)
+      .tick(1000)
     dispatch(setNodes(simulation.nodes()))
     dispatch(setLinks(forceLink.links() as SimulationGaphLinkAndNodes[]))
   }
@@ -115,7 +124,13 @@ export default function Game() {
   const handleResetGame = () => {
     clearInterval(timer)
     dispatch(resetGame())
-    initGame()
+    initGame(false)
+  }
+
+  const handleNewGame = () => {
+    clearInterval(timer)
+    dispatch(resetGame())
+    initGame(true)
   }
 
   const renderNodes = (nodes: SimulationGaphNode[], radius: number): ReactNode[] => {
@@ -150,7 +165,9 @@ export default function Game() {
             <div className="button" onClick={handleResetGame}>
               Restart
             </div>
-            <div className="button">New</div>
+            <div className="button" onClick={handleNewGame}>
+              New
+            </div>
           </div>
         </div>
         <div className="gaph-container">
