@@ -248,7 +248,7 @@ export default function Game() {
           </p>
           <ul>
             <li>
-              <b>Choose your destiny:</b> You may start at any node of your choice.
+              <b>Choose your destiny:</b> You may start at any node.
             </li>
             <li>
               <b>Dont get greedy:</b> You may not visit the same node more than 3 times unless its the final visit to the origin node.
