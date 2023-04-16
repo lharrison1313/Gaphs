@@ -5,6 +5,7 @@ import { SimulationGaphNode, SimulationGaphLink, SimulationGaphLinkAndNodes } fr
 import boundary from 'd3-force-boundary'
 import GaphNode from '../GaphNode/GaphNode'
 import GaphLink from '../GaphLink/GaphLink'
+import generateRandomGraph from '../../utils/generateGraph'
 import { useAppSelector, useAppDispatch } from '../../hooks'
 import {
   incrementScore,
@@ -43,6 +44,7 @@ export default function Game() {
   const nodeRadius = 20
   const nodeDistance = 75
 
+  //on component mount generate graph and setup game
   useEffect(() => {
     initGame(true)
   }, [])
@@ -86,11 +88,15 @@ export default function Game() {
 
   useEffect(() => {
     let allNodesClicked = nodes.every((node) => node.clickedCount > 0)
+    let tooManyClicked = nodes.some((node) => node.clickedCount >= 4)
     if (allNodesClicked && nodeStack[0] === nodeStack[nodeStack.length - 1] && nodeStack.length > 0) {
       //stop the timer
       clearInterval(timer)
       //victory
       alert('win!')
+    } else if (tooManyClicked) {
+      clearInterval(timer)
+      alert('lose!')
     }
   }, [nodeStack])
 
@@ -121,18 +127,6 @@ export default function Game() {
     dispatch(setLinks(forceLink.links() as SimulationGaphLinkAndNodes[]))
   }
 
-  const handleResetGame = () => {
-    clearInterval(timer)
-    dispatch(resetGame())
-    initGame(false)
-  }
-
-  const handleNewGame = () => {
-    clearInterval(timer)
-    dispatch(resetGame())
-    initGame(true)
-  }
-
   const renderNodes = (nodes: SimulationGaphNode[], radius: number): ReactNode[] => {
     let nodeElements: ReactNode[] = []
     nodes.forEach((node) => {
@@ -147,6 +141,18 @@ export default function Game() {
       linkElements.push(<GaphLink link={link} key={link.source.id + link.target.id} />)
     })
     return linkElements
+  }
+
+  const handleResetGame = () => {
+    clearInterval(timer)
+    dispatch(resetGame())
+    initGame(false)
+  }
+
+  const handleNewGame = () => {
+    clearInterval(timer)
+    dispatch(resetGame())
+    initGame(true)
   }
 
   return (
@@ -198,60 +204,4 @@ export default function Game() {
       <div className="right-nav"></div>
     </div>
   )
-}
-
-function generateRandomGraph(numNodes: number, numEdges: number) {
-  let nodes: SimulationGaphNode[] = []
-  let edges: SimulationGaphLink[] = []
-  let alphabet = Array.from('abcdefghijklmnopqrstuvwxyz')
-  let possibleEdges: { source: string; target: string }[] = []
-
-  // Create nodes with random IDs
-  for (let i = 0; i < numNodes; i++) {
-    let nodeId = alphabet.splice(Math.floor(Math.random() * alphabet.length), 1)[0]
-    nodes.push({ id: nodeId, clickedCount: 0 })
-  }
-
-  // Create list of all possible edge source and target pairs
-  for (let i = 0; i < nodes.length; i++) {
-    for (let j = 0; j < nodes.length; j++) {
-      if (i !== j) {
-        let source = nodes[i].id
-        let target = nodes[j].id
-
-        // Exclude pairs with the same source and target nodes
-        if (source !== target && !possibleEdges.some((edge) => edge.source === target && edge.target === source)) {
-          possibleEdges.push({ source: source, target: target })
-        }
-      }
-    }
-  }
-
-  // Create edges with random weights
-  for (let i = 0; i < numEdges; i++) {
-    // Choose a random index from the list of possible edges
-    let randomIndex = Math.floor(Math.random() * possibleEdges.length)
-
-    // Get the source and target from the chosen edge
-    let source = possibleEdges[randomIndex].source
-    let target = possibleEdges[randomIndex].target
-
-    // Remove the chosen edge from the list of possible edges
-    possibleEdges.splice(randomIndex, 1)
-
-    // Add the edge to the edges array with a random weight
-    let weight = Math.floor(Math.random() * 10) + 1
-    let edge = { source: source, target: target, crossedCount: 0, weight: weight }
-    edges.push(edge)
-  }
-
-  //prune ophaned nodes
-  let finalNodes: SimulationGaphNode[] = []
-  nodes.forEach((node) => {
-    if (edges.findIndex((edge) => edge.source === node.id || edge.target === node.id) > -1) {
-      finalNodes.push(node)
-    }
-  })
-
-  return { nodes: finalNodes, edges: edges }
 }
