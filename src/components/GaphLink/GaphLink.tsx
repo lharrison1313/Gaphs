@@ -35,7 +35,7 @@ export default function GaphLink(props: GaphLinkProps) {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    animation.start()
+    animation.start({ to: { color: getlinkColor(props.link.crossedCount) } })
   }, [props.link.crossedCount])
 
   const handleMouseEnter = () => {

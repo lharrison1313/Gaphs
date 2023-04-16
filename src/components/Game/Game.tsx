@@ -24,6 +24,7 @@ import {
   incrementPath,
 } from './gameSlice'
 import { cloneDeep } from 'lodash'
+import { SpringConfig, useSpring, useSpringRef, animated } from 'react-spring'
 
 export default function Game() {
   const dispatch = useAppDispatch()
@@ -38,17 +39,36 @@ export default function Game() {
 
   const [timer, setTimer] = useState(0)
   const [emptyGraph, setEmptyGraph] = useState<Graph>({ nodes: [], edges: [] })
+  const [gameStatus, setGameStatus] = useState(0)
+  const [prevScore, setPrevScore] = useState(0)
+  const [prevPath, setPrevPath] = useState(0)
 
   const width = window.innerWidth > 700 ? 500 : window.innerWidth - 50
   const height = window.innerWidth > 700 ? 450 : width * 0.9
   const nodeRadius = window.innerWidth > 700 ? 20 : 12
   const nodeDistance = window.innerWidth > 700 ? 75 : 45
   const multiBodyForce = window.innerWidth > 700 ? -2000 : -900
+
+  const endGameAnimation = useSpringRef()
+  const config: SpringConfig = { duration: 500 }
+  const endGameProps = useSpring({
+    ref: endGameAnimation,
+    from: { height: '0px' },
+    config: config,
+  })
+
+  const gameGraphs = [
+    { nodes: 5, edges: 7 },
+    { nodes: 6, edges: 7 },
+    { nodes: 6, edges: 8 },
+  ]
+
   //on component mount generate graph and setup game
   useEffect(() => {
     initGame(true)
   }, [])
 
+  //handle node activation game logic
   useEffect(() => {
     if (activeNode.id !== '') {
       console.log(nodeStack)
@@ -86,24 +106,33 @@ export default function Game() {
     }
   }, [activeNode])
 
+  //check end condition
   useEffect(() => {
     let allNodesClicked = nodes.every((node) => node.clickedCount > 0)
     let tooManyClicked = nodes.some((node) => node.clickedCount >= 4)
     if (allNodesClicked && nodeStack[0] === nodeStack[nodeStack.length - 1] && nodeStack.length > 0) {
-      //stop the timer
       clearInterval(timer)
-      //victory
-      alert('win!')
+      setGameStatus(1)
     } else if (tooManyClicked) {
       clearInterval(timer)
-      alert('lose!')
+      setGameStatus(2)
     }
   }, [nodeStack])
+
+  //handle end game screen animation
+  useEffect(() => {
+    if (gameStatus === 0) {
+      endGameAnimation.start({ to: { height: `0px` } })
+    } else {
+      endGameAnimation.start({ to: { height: `${height}px` } })
+    }
+  }, [gameStatus])
 
   const initGame = (newGraph: boolean) => {
     let graph
     if (newGraph) {
-      graph = generateRandomGraph(6, 7)
+      let chosenGraph = gameGraphs[Math.floor(Math.random() * gameGraphs.length)]
+      graph = generateRandomGraph(chosenGraph.nodes, chosenGraph.edges)
       setEmptyGraph(graph)
     } else {
       graph = emptyGraph
@@ -125,6 +154,7 @@ export default function Game() {
       .tick(1000)
     dispatch(setNodes(simulation.nodes()))
     dispatch(setLinks(forceLink.links() as SimulationGaphLinkAndNodes[]))
+    setGameStatus(0)
   }
 
   const renderNodes = (nodes: SimulationGaphNode[], radius: number): ReactNode[] => {
@@ -183,6 +213,10 @@ export default function Game() {
               {renderNodes(nodes, nodeRadius)}
             </svg>
           </div>
+          <animated.div
+            className="game-over"
+            style={{ width: width, height: endGameProps.height, backgroundColor: gameStatus === 2 ? '#db3030' : '#276FAB' }}
+          ></animated.div>
         </div>
         <div className="rules-container">
           <p>

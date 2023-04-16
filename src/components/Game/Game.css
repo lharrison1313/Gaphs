@@ -84,6 +84,12 @@ text {
   border-radius: 15px;
 }
 
+.game-over {
+  background-color: black;
+  border-radius: 15px;
+  position: absolute;
+}
+
 circle:hover {
   cursor: pointer;
 }
