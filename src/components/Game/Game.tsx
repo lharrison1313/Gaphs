@@ -240,7 +240,7 @@ function generateRandomGraph(numNodes: number, numEdges: number) {
     possibleEdges.splice(randomIndex, 1)
 
     // Add the edge to the edges array with a random weight
-    let weight = Math.floor(Math.random() * 20) + 1
+    let weight = Math.floor(Math.random() * 10) + 1
     let edge = { source: source, target: target, crossedCount: 0, weight: weight }
     edges.push(edge)
   }
