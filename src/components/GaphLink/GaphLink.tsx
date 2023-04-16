@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import { SimulationGaphLinkAndNodes } from '../../types/d3-force'
 import { useSpringRef, useSpring, animated, SpringConfig } from 'react-spring'
+import { useDispatch } from 'react-redux'
+import { reorderLinks } from '../Game/gameSlice'
 
 interface GaphLinkProps {
   link: SimulationGaphLinkAndNodes
@@ -30,12 +32,18 @@ export default function GaphLink(props: GaphLinkProps) {
     config: config,
   })
 
+  const dispatch = useDispatch()
+
   useEffect(() => {
     animation.start()
   }, [props.link.crossedCount])
 
+  const handleMouseEnter = () => {
+    dispatch(reorderLinks(props.link))
+  }
+
   return (
-    <g>
+    <g onMouseEnter={handleMouseEnter}>
       <animated.line
         x1={props.link.source.x}
         y1={props.link.source.y}
