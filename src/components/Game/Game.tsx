@@ -39,11 +39,11 @@ export default function Game() {
   const [timer, setTimer] = useState(0)
   const [emptyGraph, setEmptyGraph] = useState<Graph>({ nodes: [], edges: [] })
 
-  const width = 500
-  const height = 450
-  const nodeRadius = 20
-  const nodeDistance = 75
-
+  const width = window.innerWidth > 700 ? 500 : window.innerWidth - 50
+  const height = window.innerWidth > 700 ? 450 : width * 0.9
+  const nodeRadius = window.innerWidth > 700 ? 20 : 12
+  const nodeDistance = window.innerWidth > 700 ? 75 : 45
+  const multiBodyForce = window.innerWidth > 700 ? -2000 : -900
   //on component mount generate graph and setup game
   useEffect(() => {
     initGame(true)
@@ -120,7 +120,7 @@ export default function Game() {
       .force('link', forceLink)
       .force('center', d3_force.forceCenter(width / 2, height / 2))
       .force('collision', d3_force.forceCollide().radius(nodeRadius))
-      .force('charge', d3_force.forceManyBody().strength(-2000))
+      .force('charge', d3_force.forceManyBody().strength(multiBodyForce))
       .force('boundary', boundary(0, 0, width, height))
       .tick(1000)
     dispatch(setNodes(simulation.nodes()))
