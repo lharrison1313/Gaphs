@@ -85,9 +85,14 @@ text {
 }
 
 .game-over {
-  background-color: black;
+  color: white;
   border-radius: 15px;
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 circle:hover {

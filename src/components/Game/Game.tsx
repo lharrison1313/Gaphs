@@ -40,8 +40,8 @@ export default function Game() {
   const [timer, setTimer] = useState(0)
   const [emptyGraph, setEmptyGraph] = useState<Graph>({ nodes: [], edges: [] })
   const [gameStatus, setGameStatus] = useState(0)
-  const [prevScore, setPrevScore] = useState(0)
-  const [prevPath, setPrevPath] = useState(0)
+  const [bestScore, setBestScore] = useState(0)
+  const [bestPath, setBestPath] = useState(0)
 
   const width = window.innerWidth > 700 ? 500 : window.innerWidth - 50
   const height = window.innerWidth > 700 ? 450 : width * 0.9
@@ -113,6 +113,12 @@ export default function Game() {
     if (allNodesClicked && nodeStack[0] === nodeStack[nodeStack.length - 1] && nodeStack.length > 0) {
       clearInterval(timer)
       setGameStatus(1)
+      if (score <= bestScore || bestScore === 0) {
+        setBestScore(score)
+      }
+      if (path <= bestPath || bestPath === 0) {
+        setBestPath(path)
+      }
     } else if (tooManyClicked) {
       clearInterval(timer)
       setGameStatus(2)
@@ -216,7 +222,25 @@ export default function Game() {
           <animated.div
             className="game-over"
             style={{ width: width, height: endGameProps.height, backgroundColor: gameStatus === 2 ? '#db3030' : '#276FAB' }}
-          ></animated.div>
+          >
+            {gameStatus === 2 && (
+              <>
+                <h1>Thats a Gaph!</h1>
+                <h3>Remember you cant click the same node 3 times</h3>
+              </>
+            )}
+            {gameStatus === 1 && (
+              <>
+                <h1>Thats Great!</h1>
+                <div>
+                  <h3>Score: {score}</h3>
+                  <h3>Path: {path}</h3>
+                  <h3>Best Score: {bestScore}</h3>
+                  <h3>Shortest Path: {bestPath}</h3>
+                </div>
+              </>
+            )}
+          </animated.div>
         </div>
         <div className="rules-container">
           <p>
