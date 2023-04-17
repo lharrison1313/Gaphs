@@ -25,6 +25,7 @@ import {
 } from './gameSlice'
 import { cloneDeep } from 'lodash'
 import { SpringConfig, useSpring, useSpringRef, animated } from 'react-spring'
+import GaphWeight from '../GaphWeight/GaphWeight'
 
 export default function Game() {
   const dispatch = useAppDispatch()
@@ -39,7 +40,7 @@ export default function Game() {
 
   const [timer, setTimer] = useState(0)
   const [emptyGraph, setEmptyGraph] = useState<Graph>({ nodes: [], edges: [] })
-  const [gameStatus, setGameStatus] = useState(0)
+  const [gameStatus, setGameStatus] = useState(-1)
   const [bestScore, setBestScore] = useState(0)
   const [bestPath, setBestPath] = useState(0)
 
@@ -53,7 +54,7 @@ export default function Game() {
   const config: SpringConfig = { duration: 500 }
   const endGameProps = useSpring({
     ref: endGameAnimation,
-    from: { height: '0px' },
+    from: { height: `${height}px` },
     config: config,
   })
 
@@ -62,11 +63,6 @@ export default function Game() {
     { nodes: 6, edges: 7 },
     { nodes: 6, edges: 8 },
   ]
-
-  //on component mount generate graph and setup game
-  useEffect(() => {
-    initGame(true)
-  }, [])
 
   //handle node activation game logic
   useEffect(() => {
@@ -97,11 +93,6 @@ export default function Game() {
         newNode.clickedCount++
         dispatch(updateNode(newNode))
         dispatch(pushNode(activeNode.id))
-        //start timer that increments score every second
-        let timerID = window.setInterval(() => {
-          dispatch(incrementScore(1))
-        }, 1000)
-        setTimer(timerID)
       }
     }
   }, [activeNode])
@@ -161,6 +152,20 @@ export default function Game() {
     dispatch(setNodes(simulation.nodes()))
     dispatch(setLinks(forceLink.links() as SimulationGaphLinkAndNodes[]))
     setGameStatus(0)
+    //start timer that increments score every second
+    if (timer) clearInterval(timer)
+    let timerID = window.setInterval(() => {
+      dispatch(incrementScore(1))
+    }, 3000)
+    setTimer(timerID)
+  }
+
+  const renderWeights = (links: SimulationGaphLinkAndNodes[]) => {
+    let weightElements: ReactNode[] = []
+    links.forEach((link) => {
+      weightElements.push(<GaphWeight link={link} />)
+    })
+    return weightElements
   }
 
   const renderNodes = (nodes: SimulationGaphNode[], radius: number): ReactNode[] => {
@@ -191,6 +196,10 @@ export default function Game() {
     initGame(true)
   }
 
+  const handleStartGame = () => {
+    initGame(true)
+  }
+
   return (
     <div className="container">
       <div className="left-nav"></div>
@@ -204,12 +213,16 @@ export default function Game() {
             <h2 className="controls-header">Path: {path}</h2>
           </div>
           <div className="controls-right">
-            <div className="button" onClick={handleResetGame}>
-              Restart
-            </div>
-            <div className="button" onClick={handleNewGame}>
-              New
-            </div>
+            {gameStatus !== -1 && (
+              <>
+                <div className="button" onClick={handleResetGame}>
+                  Restart
+                </div>
+                <div className="button" onClick={handleNewGame}>
+                  New
+                </div>
+              </>
+            )}
           </div>
         </div>
         <div className="gaph-container">
@@ -217,6 +230,7 @@ export default function Game() {
             <svg viewBox={`0 0 ${width} ${height}`}>
               {renderLinks(links)}
               {renderNodes(nodes, nodeRadius)}
+              {renderWeights(links)}
             </svg>
           </div>
           <animated.div
@@ -240,6 +254,14 @@ export default function Game() {
                 </div>
               </>
             )}
+            {gameStatus === -1 && (
+              <>
+                <h1>Welcome to GAPHS!</h1>
+                <div className="button-start" onClick={handleStartGame}>
+                  Start
+                </div>
+              </>
+            )}
           </animated.div>
         </div>
         <div className="rules-container">
@@ -254,7 +276,7 @@ export default function Game() {
               <b>Dont get greedy:</b> You may not visit the same node more than 3 times unless its the final visit to the origin node.
             </li>
             <li>
-              <b>Time is of the essence:</b> Each second you waste counts against your score.
+              <b>Time is of the essence:</b> Each second you waste counts against your score. The lower your score the better!
             </li>
           </ul>
         </div>

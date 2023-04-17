@@ -28,7 +28,7 @@ text {
 }
 
 .game {
-  padding-top: 25px;
+  padding-top: 10px;
   display: flex;
   flex: 1;
   height: 100%;
@@ -39,7 +39,6 @@ text {
 .title-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 15px;
 }
 
 .controls-container {
@@ -68,10 +67,28 @@ text {
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  color: #3d4b6b;
 }
 
+.button-start {
+  background-color: #64c8e6;
+  border-radius: 10px;
+  padding: 0 20px;
+  margin: 0 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #3d4b6b;
+  font-size: 20px;
+  margin-top: 20px;
+}
+
+.button-start:hover,
 .button:hover {
   cursor: pointer;
+  background-color: #57b0cb;
+  transition: background-color 0.5s ease;
 }
 
 .gaph-container {

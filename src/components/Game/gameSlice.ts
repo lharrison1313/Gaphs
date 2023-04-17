@@ -43,17 +43,6 @@ export const gameSlice = createSlice({
       newLinks[replaceIndex] = action.payload
       state.links = newLinks
     },
-    reorderLinks: (state, action: PayloadAction<SimulationGaphLinkAndNodes>) => {
-      let newLinks = []
-      state.links.forEach((link) => {
-        if (!(link.source.id === action.payload.source.id && link.target.id === action.payload.target.id)) {
-          newLinks.push(link)
-        }
-      })
-      newLinks.push(action.payload)
-      console.log('reorder', newLinks)
-      state.links = newLinks
-    },
     incrementScore: (state, action: PayloadAction<number>) => {
       state.score += action.payload
     },
@@ -79,8 +68,7 @@ export const gameSlice = createSlice({
   },
 })
 
-export const { incrementScore, setNodes, setLinks, pushNode, updateNode, updateLink, activateNode, resetGame, incrementPath, reorderLinks } =
-  gameSlice.actions
+export const { incrementScore, setNodes, setLinks, pushNode, updateNode, updateLink, activateNode, resetGame, incrementPath } = gameSlice.actions
 
 export const selectScore = (state: RootState) => state.game.score
 export const selectPath = (state: RootState) => state.game.path
