@@ -26,6 +26,7 @@ import {
 import { cloneDeep } from 'lodash'
 import { SpringConfig, useSpring, useSpringRef, animated } from 'react-spring'
 import GaphWeight from '../GaphWeight/GaphWeight'
+import { TwitterShareButton } from 'react-twitter-embed'
 
 export default function Game() {
   const dispatch = useAppDispatch()
@@ -240,7 +241,7 @@ export default function Game() {
             {gameStatus === 2 && (
               <>
                 <h1>Thats a Gaph!</h1>
-                <h3>Remember you cant click the same node 3 times</h3>
+                <h3>Remember you can not click the same node 3 times</h3>
               </>
             )}
             {gameStatus === 1 && (
@@ -251,14 +252,23 @@ export default function Game() {
                   <h3>Path: {path}</h3>
                   <h3>Best Score: {bestScore}</h3>
                   <h3>Shortest Path: {bestPath}</h3>
+                  <TwitterShareButton
+                    options={{
+                      size: 'large',
+                      text: 'I just played this awful game called GAPHS!',
+                    }}
+                    url={window.location.href}
+                  />
                 </div>
               </>
             )}
             {gameStatus === -1 && (
               <>
                 <h1>Welcome to GAPHS!</h1>
-                <div className="button-start" onClick={handleStartGame}>
-                  Start
+                <div>
+                  <div className="button-start" onClick={handleStartGame}>
+                    Start
+                  </div>
                 </div>
               </>
             )}
