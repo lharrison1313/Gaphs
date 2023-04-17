@@ -1,6 +1,7 @@
 {
   "name": "gaphs",
   "version": "0.1.0",
+  "homepage": "https://lharrison1313.github.io/Gaphs/",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.3",
