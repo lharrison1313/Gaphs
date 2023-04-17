@@ -7,7 +7,7 @@
     "main.3b149567.js.map": "/Gaphs/static/js/main.3b149567.js.map"
   },
   "entrypoints": [
-    "static/css/main.9db20ec6.css",
-    "static/js/main.3b149567.js"
+    "/Gaphs/static/css/main.9db20ec6.css",
+    "/Gaphs/static/js/main.3b149567.js"
   ]
 }
