@@ -1,2 +1,3 @@
 # Gaphs
- A game of graphs and gaphs
+
+A game of weighted graphs and shortest paths
