@@ -7,7 +7,7 @@
     "main.88da4bc1.js.map": "/Gaphs/static/js/main.88da4bc1.js.map"
   },
   "entrypoints": [
-    "static/css/main.34fe2c18.css",
-    "static/js/main.88da4bc1.js"
+    "/Gaphs/static/css/main.34fe2c18.css",
+    "/Gaphs/static/js/main.88da4bc1.js"
   ]
 }
