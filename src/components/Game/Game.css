@@ -39,6 +39,7 @@ text {
 .title-container {
   display: flex;
   justify-content: center;
+  margin-bottom: 15px;
 }
 
 .controls-container {
