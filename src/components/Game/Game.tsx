@@ -241,7 +241,7 @@ export default function Game() {
             {gameStatus === 2 && (
               <>
                 <h1>Thats a Gaph!</h1>
-                <h3>Remember you can not click the same node 3 times</h3>
+                <h3>Remember you can not click the same node more than 3 times</h3>
               </>
             )}
             {gameStatus === 1 && (
